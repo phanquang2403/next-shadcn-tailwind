@@ -1,10 +1,12 @@
-import { ModeToggle } from "@/components/toggle-theme";
+import RegisterForm from "./register-form";
 
 const RegisterPage = () => {
   return (
     <div>
-      <h1>page register</h1>
-      <ModeToggle />
+      <h1>Đăng ký</h1>
+      <div className="flex justify-center border py-6">
+        <RegisterForm />
+      </div>
     </div>
   );
 };
