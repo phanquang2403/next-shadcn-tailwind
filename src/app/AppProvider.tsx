@@ -1,35 +1,20 @@
 "use client";
-import { createContext, useContext, useMemo, useState } from "react";
-
-const AppContext = createContext({
-	sessionToken: "",
-	setSessionToken: (token: string) => {},
-});
-
-export const useAppContext = () => {
-	const context = useContext(AppContext);
-	if (!context) {
-		throw new Error("useAppContext must be used within a AppProvider");
-	}
-	return context;
-};
+import { clientSessionToken } from "@/lib/clientToken";
+import { useState } from "react";
 
 interface AppProviderProps {
-	readonly children: React.ReactNode;
-	readonly initialSessionToken?: string;
+  readonly children: React.ReactNode;
+  readonly initialSessionToken?: string;
 }
 export default function AppProvider({
-	children,
-	initialSessionToken = "",
+  children,
+  initialSessionToken = "",
 }: AppProviderProps) {
-	const [sessionToken, setSessionToken] = useState<string>(initialSessionToken);
+  useState(() => {
+    if (typeof window !== "undefined") {
+      clientSessionToken.value = initialSessionToken;
+    }
+  });
 
-	const contextValue = useMemo(
-		() => ({ sessionToken, setSessionToken }),
-		[sessionToken, setSessionToken]
-	);
-
-	return (
-		<AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
-	);
+  return <>{children};</>;
 }

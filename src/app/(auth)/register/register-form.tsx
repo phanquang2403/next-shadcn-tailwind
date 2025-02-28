@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
+import { authApiRequest } from "@/apiRequest/auth";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,25 +14,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import envConfig from "@/config";
-
-const formSchema = z
-  .object({
-    name: z.string(),
-    email: z.string().email("Email không hợp lệ"),
-    password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
-    confirmPassword: z
-      .string()
-      .min(6, "Xác nhận mật khẩu phải có ít nhất 6 ký tự"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Mật khẩu không khớp",
-    path: ["confirmPassword"],
-  });
+import { RegisterBody, RegisterBodyType } from "@/schema/account.schema";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const RegisterForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const route = useRouter();
+
+  const form = useForm<RegisterBodyType>({
+    resolver: zodResolver(RegisterBody),
     defaultValues: {
       name: undefined,
       email: undefined,
@@ -41,20 +31,32 @@ const RegisterForm = () => {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    const result = await fetch(
-      `${envConfig.NEXT_PUBLIC_API_ENDPOINT}/auth/register`,
-      {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    ).then((res) => res.json());
+  async function onSubmit(values: RegisterBodyType) {
+    try {
+      const result = await authApiRequest.register(values);
+      toast.success(result.payload.message);
+      await authApiRequest.auth({ sessionToken: result.payload.data.token });
+      route.push("/me");
 
-    console.log({ result });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const errors = error.payload.errors as {
+        field: string;
+        message: string;
+      }[];
+      const status = error.status as number;
+
+      if (status === 422) {
+        errors.forEach((error) => {
+          form.setError(error.field as "email" | "password", {
+            type: "serve",
+            message: error.message,
+          });
+        });
+      } else {
+        toast.error(error.payload.message);
+      }
+    }
   }
 
   return (
