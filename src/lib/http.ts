@@ -6,12 +6,42 @@ import { LoginResType } from "@/schema/account.schema";
 type CustomOptions = RequestInit & {
   baseUrl?: string;
 };
+interface IPayloadError {
+  message: string;
+  [key: string]: any;
+}
 
-class HttpError extends Error {
+const ENTITY_ERROR_STATUS = 422;
+
+type EntityErrorPayload = {
+  message: string;
+  errors: {
+    field: string;
+    message: string;
+  }[];
+};
+
+export class HttpError extends Error {
   status: number;
-  payload: any;
+  payload: IPayloadError;
   constructor({ status, payload }: { status: number; payload: any }) {
     super("Http Error");
+    this.status = status;
+    this.payload = payload;
+  }
+}
+
+export class EntityError extends HttpError {
+  status: 422;
+  payload: EntityErrorPayload;
+  constructor({
+    status,
+    payload,
+  }: {
+    status: 422;
+    payload: EntityErrorPayload;
+  }) {
+    super({ status, payload });
     this.status = status;
     this.payload = payload;
   }
@@ -57,6 +87,11 @@ const request = async <Response>(
   };
 
   if (!res.ok) {
+    if (res.status === ENTITY_ERROR_STATUS) {
+      throw new EntityError(
+        data as { status: 422; payload: EntityErrorPayload }
+      );
+    }
     throw new HttpError(data);
   }
 

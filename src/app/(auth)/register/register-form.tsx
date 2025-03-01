@@ -14,12 +14,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { handleErrorApi } from "@/lib/utils";
 import { RegisterBody, RegisterBodyType } from "@/schema/account.schema";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 const RegisterForm = () => {
   const route = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<RegisterBodyType>({
     resolver: zodResolver(RegisterBody),
@@ -32,6 +35,8 @@ const RegisterForm = () => {
   });
 
   async function onSubmit(values: RegisterBodyType) {
+    if (loading) return;
+    setLoading(true);
     try {
       const result = await authApiRequest.register(values);
       toast.success(result.payload.message);
@@ -40,22 +45,9 @@ const RegisterForm = () => {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const errors = error.payload.errors as {
-        field: string;
-        message: string;
-      }[];
-      const status = error.status as number;
-
-      if (status === 422) {
-        errors.forEach((error) => {
-          form.setError(error.field as "email" | "password", {
-            type: "serve",
-            message: error.message,
-          });
-        });
-      } else {
-        toast.error(error.payload.message);
-      }
+      handleErrorApi({ error, setError: form.setError });
+    } finally {
+      setLoading(false);
     }
   }
 

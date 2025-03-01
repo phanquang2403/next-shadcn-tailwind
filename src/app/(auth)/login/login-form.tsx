@@ -18,9 +18,12 @@ import { Input } from "@/components/ui/input";
 import { LoginBody, LoginBodyType } from "@/schema/account.schema";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { handleErrorApi } from "@/lib/utils";
+import { useState } from "react";
 
 const LoginForm = () => {
   const route = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof LoginBody>>({
     resolver: zodResolver(LoginBody),
@@ -31,6 +34,8 @@ const LoginForm = () => {
   });
 
   async function onSubmit(values: LoginBodyType) {
+    if (loading) return;
+    setLoading(true);
     try {
       const result = await authApiRequest.login(values);
       toast.success(result.payload.message);
@@ -39,22 +44,9 @@ const LoginForm = () => {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const errors = error.payload.errors as {
-        field: string;
-        message: string;
-      }[];
-      const status = error.status as number;
-
-      if (status === 422) {
-        errors.forEach((error) => {
-          form.setError(error.field as "email" | "password", {
-            type: "serve",
-            message: error.message,
-          });
-        });
-      } else {
-        toast.error(error.payload.message);
-      }
+      handleErrorApi({ error, setError: form.setError });
+    } finally {
+      setLoading(false);
     }
   }
 
