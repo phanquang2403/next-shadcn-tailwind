@@ -1,24 +1,17 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
-import { authApiRequest } from "@/apiRequest/auth";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { handleErrorApi } from "@/lib/utils";
-import { RegisterBody, RegisterBodyType } from "@/schema/account.schema";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
+import { authApiRequest } from '@/apiRequest/auth';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { handleErrorApi } from '@/lib/utils';
+import { RegisterBody, RegisterBodyType } from '@/schema/account.schema';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const RegisterForm = () => {
   const route = useRouter();
@@ -41,7 +34,7 @@ const RegisterForm = () => {
       const result = await authApiRequest.register(values);
       toast.success(result.payload.message);
       await authApiRequest.auth({ sessionToken: result.payload.data.token });
-      route.push("/me");
+      route.push('/me');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -101,11 +94,7 @@ const RegisterForm = () => {
               <FormItem>
                 <FormLabel>Confirm Password:</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Confirm Password"
-                    type="password"
-                    {...field}
-                  />
+                  <Input placeholder="Confirm Password" type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Button } from "./ui/button";
-import { authApiRequest } from "@/apiRequest/auth";
-import { handleErrorApi } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import React from 'react';
+import { Button } from './ui/button';
+import { authApiRequest } from '@/apiRequest/auth';
+import { handleErrorApi } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 const ButtonLogout = () => {
   const route = useRouter();
@@ -12,7 +12,7 @@ const ButtonLogout = () => {
   const handleLogout = async () => {
     try {
       await authApiRequest.logoutFromNextClientToNextServer();
-      route.push("/login");
+      route.push('/login');
     } catch (error) {
       handleErrorApi({ error: error });
     }

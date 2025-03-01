@@ -1,8 +1,8 @@
-"use client";
-import { useState } from "react";
-import customerCard from "./card.module.scss";
-import clsx from "clsx";
-import { Button } from "@/components/ui/button";
+'use client';
+import { useState } from 'react';
+import customerCard from './card.module.scss';
+import clsx from 'clsx';
+import { Button } from '@/components/ui/button';
 
 const CardComp = () => {
   const [expending, setExpending] = useState<boolean>(false);
@@ -13,9 +13,7 @@ const CardComp = () => {
       })}
     >
       CardComp
-      <Button onClick={() => setExpending((prev) => !prev)}>
-        dsdsssssssssssss
-      </Button>
+      <Button onClick={() => setExpending((prev) => !prev)}>dsdsssssssssssss</Button>
     </div>
   );
 };

@@ -1,25 +1,18 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { authApiRequest } from "@/apiRequest/auth";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { LoginBody, LoginBodyType } from "@/schema/account.schema";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { handleErrorApi } from "@/lib/utils";
-import { useState } from "react";
+import { authApiRequest } from '@/apiRequest/auth';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { LoginBody, LoginBodyType } from '@/schema/account.schema';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { handleErrorApi } from '@/lib/utils';
+import { useState } from 'react';
 
 const LoginForm = () => {
   const route = useRouter();
@@ -28,8 +21,8 @@ const LoginForm = () => {
   const form = useForm<z.infer<typeof LoginBody>>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
@@ -40,7 +33,7 @@ const LoginForm = () => {
       const result = await authApiRequest.login(values);
       toast.success(result.payload.message);
       await authApiRequest.auth({ sessionToken: result.payload.data.token });
-      route.push("/me");
+      route.push('/me');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

@@ -1,13 +1,13 @@
-import accountApiRequest from "@/apiRequest/account";
-import { cookies } from "next/headers";
-import Profile from "./profile";
+import accountApiRequest from '@/apiRequest/account';
+import { cookies } from 'next/headers';
+import Profile from './profile';
 
 const MePage = async () => {
   const cookiesStore = await cookies();
-  const sessionToken = cookiesStore.get("sessionToken");
+  const sessionToken = cookiesStore.get('sessionToken');
 
-  const result = await accountApiRequest.me(sessionToken?.value ?? "");
-  console.log("____________MePage__________", result);
+  const result = await accountApiRequest.me(sessionToken?.value ?? '');
+  console.log('____________MePage__________', result);
 
   return (
     <div>
