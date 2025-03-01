@@ -27,3 +27,10 @@ export const handleErrorApi = ({
     toast.error(error.payload.message);
   }
 };
+
+/**
+ * @description  Xóa ký tự ("/")
+ */
+export const normalizePath = (path: string) => {
+  return path.startsWith("/") ? path.slice(1) : path;
+};

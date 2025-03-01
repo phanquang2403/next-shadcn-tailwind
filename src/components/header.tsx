@@ -1,6 +1,6 @@
-import React from "react";
-import { ModeToggle } from "./toggle-theme";
 import Link from "next/link";
+import ButtonLogout from "./button-logout";
+import { ModeToggle } from "./toggle-theme";
 
 const Header = () => {
   return (
@@ -12,6 +12,7 @@ const Header = () => {
         <li>
           <Link href={"/register"}>Đăng Ký</Link>
         </li>
+        <ButtonLogout />
       </ul>
       <ModeToggle />
     </div>

@@ -2,6 +2,7 @@
 import envConfig from "@/config";
 import { clientSessionToken } from "./clientToken";
 import { LoginResType } from "@/schema/account.schema";
+import { normalizePath } from "./utils";
 
 type CustomOptions = RequestInit & {
   baseUrl?: string;
@@ -91,14 +92,22 @@ const request = async <Response>(
       throw new EntityError(
         data as { status: 422; payload: EntityErrorPayload }
       );
+    } else {
+      throw new HttpError(data);
     }
-    throw new HttpError(data);
   }
 
-  if (["auth/login", "auth/register"].includes(url)) {
-    clientSessionToken.value = (payload as LoginResType)?.data?.token;
-  } else if (["auth/logout"].includes(url)) {
-    clientSessionToken.value = "";
+  // đảm bảo chạy ở client
+  if (typeof window !== "undefined") {
+    if (
+      ["auth/login", "auth/register"].some(
+        (item) => item === normalizePath(url)
+      )
+    ) {
+      clientSessionToken.value = (payload as LoginResType)?.data?.token;
+    } else if ("auth/logout" === normalizePath(url)) {
+      clientSessionToken.value = "";
+    }
   }
   return data;
 };
